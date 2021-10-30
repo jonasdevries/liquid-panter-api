@@ -1,6 +1,7 @@
 package be.jslm.liquidpanter;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,5 +40,20 @@ public class EventService {
 
     public List<Event> getAllEvents() {
         return (List<Event>) eventRepository.findAll();
+    }
+
+    @Transactional
+    public Event updateEvent(long id, EventDto eventDto) {
+
+        Optional<Event> eventFromDatabase = eventRepository.findById(id);
+        if(eventFromDatabase.isEmpty()) {
+            throw new EventNotFoundException(String.format("Event with id: '%s' not found", id));
+        }
+
+        Event eventToUpdate = eventFromDatabase.get();
+        eventToUpdate.setTitle(eventDto.getTitle());
+        eventToUpdate.setWhen(eventToUpdate.getWhen());
+        eventToUpdate.setLocation(eventDto.getLocation());
+        return eventRepository.save(eventToUpdate);
     }
 }

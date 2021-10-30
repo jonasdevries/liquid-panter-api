@@ -19,9 +19,9 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -108,6 +108,44 @@ class EventsControllerTest {
         this.mockMvc
           .perform(get("/api/events/42"))
           .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void updateEventWithKnownIdShouldUpdateEvent() throws Exception {
+
+        String writeValueAsString = "{\"title\":\"Updated title\",\"when\":\"Updated when\",\"location\":\"Updated location\"}";
+
+        when(eventService.updateEvent(eq(1L), argumentCaptor.capture()))
+          .thenReturn(createEvent(1L, "Updated title", "Updated when", "Updated location"));
+
+        this.mockMvc.perform(put("/api/events/1")
+          .contentType("application/json")
+          .content(writeValueAsString))
+          .andExpect(status().isOk())
+          .andExpect(content().contentType("application/json"))
+          .andExpect(jsonPath("$.title", is("Updated title")))
+          .andExpect(jsonPath("$.when", is("Updated when")))
+          .andExpect(jsonPath("$.location", is("Updated location")));
+
+        assertThat(argumentCaptor.getValue().getTitle(), is("Updated title"));
+        assertThat(argumentCaptor.getValue().getWhen(), is("Updated when"));
+        assertThat(argumentCaptor.getValue().getLocation(), is("Updated location"));
+    }
+
+    @Test
+    public void updateBookWithUnknownIdShouldReturn404() throws Exception {
+
+        String writeValueAsString = "{\"title\":\"Updated title\",\"when\":\"Updated when\",\"location\":\"Updated location\"}";
+
+        when(eventService.updateEvent(eq(42L), argumentCaptor.capture()))
+          .thenThrow(new EventNotFoundException("The event with id '42' was not found"));
+
+        this.mockMvc
+          .perform(put("/api/events/42")
+            .contentType("application/json")
+            .content(writeValueAsString))
+          .andExpect(status().isNotFound());
+
     }
 
 
