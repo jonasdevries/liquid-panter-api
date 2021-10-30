@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -148,6 +151,27 @@ class EventsControllerTest {
 
     }
 
+    @Test
+    public void deleteEventWithKnownIdShouldDeleteEventFromDatabase() throws Exception {
+
+        this.mockMvc
+          .perform(delete("/api/events/1")
+            .contentType("application/json"))
+          .andExpect(status().isOk());
+
+        verify(eventService).deleteEventById(1L);
+
+    }
+
+    @Test
+    public void deleteEventWithUnknownIdShouldReturn404() throws Exception {
+
+        this.mockMvc
+          .perform(delete("/api/events/42")
+            .contentType("application/json"))
+          .andExpect(status().isNotFound());
+
+    }
 
     private Event createEvent(long id, String title, String when, String location) {
         Event event = new Event();

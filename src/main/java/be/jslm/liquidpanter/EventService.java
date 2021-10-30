@@ -56,4 +56,8 @@ public class EventService {
         eventToUpdate.setLocation(eventDto.getLocation());
         return eventRepository.save(eventToUpdate);
     }
+
+    public void deleteEventById(Long id) {
+        eventRepository.deleteById(id);
+    }
 }
