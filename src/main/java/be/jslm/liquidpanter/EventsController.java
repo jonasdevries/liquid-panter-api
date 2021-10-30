@@ -33,9 +33,12 @@ public class EventsController {
     }
 
     @GetMapping
-    public Iterable<Event> getEvents() {
+    public ResponseEntity<List<Event>> getAllEvents() {
+        return ResponseEntity.ok(eventService.getAllEvents());
+    }
 
-        return eventService.getEvents();
-
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Long id){
+        return ResponseEntity.ok(eventService.getEventById(id));
     }
 }

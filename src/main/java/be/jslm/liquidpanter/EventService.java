@@ -2,6 +2,9 @@ package be.jslm.liquidpanter;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class EventService {
 
@@ -23,7 +26,18 @@ public class EventService {
         return event.getId();
     }
 
-    public Iterable<Event> getEvents() {
-        return eventRepository.findAll();
+    public Event getEventById(long id) {
+
+        Optional<Event> requestedEvent = eventRepository.findById(id);
+
+        if(requestedEvent.isEmpty()){
+            throw new EventNotFoundException(String.format("Event with id: '%s' not found", id));
+        }
+
+        return requestedEvent.get();
+    }
+
+    public List<Event> getAllEvents() {
+        return (List<Event>) eventRepository.findAll();
     }
 }
