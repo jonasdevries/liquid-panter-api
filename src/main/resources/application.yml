@@ -1,0 +1,13 @@
+#debug: true
+
+#datasource is set by spring boot bean but is overwritten here to access h2/console
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: sa
+
+  h2:
+    console:
+      enabled: true
