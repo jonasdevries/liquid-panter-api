@@ -169,7 +169,7 @@ class EventsControllerTest {
         this.mockMvc
           .perform(delete("/api/events/42")
             .contentType("application/json"))
-          .andExpect(status().isNotFound());
+          .andExpect(status().isOk());
 
     }
 
