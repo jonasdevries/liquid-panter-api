@@ -45,12 +45,10 @@ public class EventService {
     @Transactional
     public Event updateEvent(long id, EventDto eventDto) {
 
-        Optional<Event> eventFromDatabase = eventRepository.findById(id);
-        if(eventFromDatabase.isEmpty()) {
-            throw new EventNotFoundException(String.format("Event with id: '%s' not found", id));
-        }
+        Event eventToUpdate =
+          eventRepository.findById(id)
+            .orElseThrow(() -> new EventNotFoundException(String.format("Event with id: '%s' not found", id)));
 
-        Event eventToUpdate = eventFromDatabase.get();
         eventToUpdate.setTitle(eventDto.getTitle());
         eventToUpdate.setWhen(eventToUpdate.getWhen());
         eventToUpdate.setLocation(eventDto.getLocation());
