@@ -20,7 +20,7 @@ public class EventService {
         Event event = new Event();
         event.setLocation(eventDto.getLocation());
         event.setTitle(eventDto.getTitle());
-        event.setWhen(event.getWhen());
+//        event.setWhen(event.getWhen());
 
         event = eventRepository.save(event);
 
